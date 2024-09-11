@@ -1,0 +1,33 @@
+﻿<Window x:Class="Sprint1ProjRGBTechno.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprint1ProjRGBTechno"
+        mc:Ignorable="d"
+        Title="Astronomical Processing" Height="336" Width="435">
+    <Grid HorizontalAlignment="Center" Width="435" Height="326" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="lboxDisplay" d:ItemsSource="{d:SampleData ItemCount=5}" Height="238" VerticalAlignment="Top" Margin="23,33,230,0"/>
+        <TextBox x:Name="neoInput" HorizontalAlignment="Left" Margin="211,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Text="Input value here...." GotFocus="neoInput_GotFocus" KeyDown="neoInput_KeyDown"/>
+        <TextBlock x:Name="neoInputLabel" HorizontalAlignment="Left" Margin="211,33,0,0" TextWrapping="Wrap" Text="Neotrinos:" VerticalAlignment="Top"/>
+        <Button x:Name="neoInputButton" Content="Enter" HorizontalAlignment="Left" Margin="374,54,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="neoInputButton_Click"/>
+        <TextBlock x:Name="bnrySearchLabel" HorizontalAlignment="Left" Margin="211,165,0,0" TextWrapping="Wrap" Text="Search By:" VerticalAlignment="Top"/>
+        <ComboBox x:Name="bnrySearchChoice" HorizontalAlignment="Left" Margin="211,185,0,0" VerticalAlignment="Top" Width="57" Height="21"/>
+        <TextBlock x:Name="searchValueLabel" HorizontalAlignment="Left" Margin="284,165,0,0" TextWrapping="Wrap" Text="Value:" VerticalAlignment="Top"/>
+        <TextBox x:Name="searchValue" HorizontalAlignment="Left" Margin="283,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86"/>
+        <Button x:Name="searchButton" Content="Search" HorizontalAlignment="Left" Margin="374,187,0,0" VerticalAlignment="Top" Height="18" Width="39"/>
+        <TextBlock x:Name="editValueLabel" HorizontalAlignment="Left" Margin="283,209,0,0" TextWrapping="Wrap" Text="Edit Value:" VerticalAlignment="Top"/>
+        <TextBox x:Name="editValue" HorizontalAlignment="Left" Margin="283,230,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86"/>
+        <Button x:Name="editValueButton" Content="Edit" HorizontalAlignment="Left" Margin="374,229,0,0" VerticalAlignment="Top" Height="18" Width="39"/>
+        <TextBlock x:Name="lboxLabel" HorizontalAlignment="Left" Margin="23,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Neutrinos:"/>
+        <TextBlock x:Name="randDataLabel" HorizontalAlignment="Left" Margin="211,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Simulate Data:"/>
+        <Button x:Name="randDataButton" Content="Randomizer" HorizontalAlignment="Left" Margin="299,87,0,0" VerticalAlignment="Top" Height="18" Width="70" Click="randDataButton_Click"/>
+        <TextBlock x:Name="bblsortLabel" HorizontalAlignment="Left" Margin="211,113,0,0" TextWrapping="Wrap" Text="Sort By:" VerticalAlignment="Top" RenderTransformOrigin="0.399,0.65"/>
+        <ComboBox x:Name="bblSortChoice" HorizontalAlignment="Left" Margin="211,134,0,0" VerticalAlignment="Top" Width="57" Height="21"/>
+        <Button x:Name="bblsortButton" Content="Sort" HorizontalAlignment="Left" Margin="283,135,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="bblsortButton_Click"/>
+
+    </Grid>
+</Window>
