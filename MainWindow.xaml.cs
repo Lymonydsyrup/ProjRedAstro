@@ -1,6 +1,6 @@
 ﻿// Benz Lenard Culanggo, RGB Techno, Sprint 01
 // Date: 12/09/2024
-// Version: 1.02
+// Version: 2.02
 // Astronomical Processing
 // Stores neutrino data which can be edited, sorted and searched 
 
@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sprint1ProjRGBTechno
 {
@@ -26,20 +27,86 @@ namespace Sprint1ProjRGBTechno
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Constant Values, Data Arrays & Methods
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            ExampleFont();
+            ClockInitializer(clock);
+            ClockInitializer(clock2);
+            //Random number from 10-90 as an example
+            Random rand = new Random();
+            for (int i = 0; i < 24; i++)
+            {
+                int rInt = rand.Next(10, 90);
+                neoArray[i] = rInt;
+                lboxDisplay.Items.Add(clock[i] + ": " + neoArray[i]);
+            }
+
+            Array.Clear(neoArray);
+            //Disabling Edit and Search Function until data is sorted
+            DisableFunction();
+
+            //Adding items on combobox
+            for (int i = 0; i < max; i++)
+            {
+                timeselection.Items.Add(new ComboBoxItem() { Content = clock[i] });
+            }
+        }
+        #region Constant Values & Arrays
         //NeoData Value and Array
         const int max = 24;
         int[] neoArray = new int[max];
-        //Temporary array holder for "hour" combobox option
-        int[] tempneoArray = new int[max];
+        int[] neoArray2 = new int[max];
+
 
         //Timestamp clock values: 12hour-clock
         const int timemax = 24;
         object[] clock = new object[timemax];
 
 
+        #region Methods
+        //Display the data and time to listbox
+        public void DisplayData(object[] time, object[] data, int max)
+        {
+            for (int i = 0; i < max; i++)
+            {
+                lboxDisplay.Items.Add(time[i] + ": " + data[i]);
+            }
+        }
+
+        //2D Aray Method to combine 2 arrays
+        public static object[,] CombineArrayAsRows(int[] array1, object[] array2)
+        {
+            //Exception if arrays are not the same length
+            if (array1.Length != array2.Length)
+            {
+                throw new InvalidOperationException("Arrays must be the same length");
+            };
+
+            //Creating 2 arrays as rows
+            object[,] combineArray = new object[2, array1.Length];
+
+            for (int i = 0; i < array1.Length; i++)
+            {
+                combineArray[0, i] = array1[i];
+                combineArray[1, i] = array2[i];
+            }
+
+            return combineArray;
+        }
+
+        //Clear Array
+        public void ClearArrayFromPtr(int[] array, int max, int ptr)
+        {
+            for (int i = ptr; i < max; i++)
+            {
+                array[i] = 0;
+            }
+        }
+
         //Initializing clock values: 12hour-clock
-        public void ClockInitializer()
+        public void ClockInitializer(object[] clock)
         {
             int am = 1;
             int pm = 1;
@@ -57,6 +124,21 @@ namespace Sprint1ProjRGBTechno
                     clock[h] = pm + " " + "PM";
                     pm++;
                 }
+            }
+        }
+        #region Ease of use
+
+        //Default text clears on focus (mouse click) 
+        private void neoInput_GotFocus(object sender, RoutedEventArgs e)
+        {
+            neoInput.Clear();
+        }
+        //"enter" key function on textbox input
+        private void neoInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                neoInputButton_Click(sender, e);
             }
         }
         //Font for example datastream
@@ -161,6 +243,67 @@ namespace Sprint1ProjRGBTechno
             }
         }
 
+                // Update frequency list if new maxCount found
+                if (count > maxCount)
+                {
+                    maxCount = count;
+                    Array.Clear(frequency); // Clear previous modes
+                    freqindex = 0;
+                    frequency[freqindex] = array[i];
+                    freqindex++;
+                }
+                // Add to frequency list if current count matches maxCount
+                else if (count == maxCount && !frequency.Contains(array[i]))
+                {
+                    frequency[freqindex] = array[i];
+                    freqindex++;
+                }
+            }
+
+            Array.Resize(ref frequency, freqindex);
+            return frequency;
+        }
+
+        public static double FindAverage(int[] array)
+        {
+            double sum = 0;
+            double count = 0;
+
+            for (int i = 0;i < array.Length;i++)
+            {
+                sum +=array[i];
+                if (!(array[i] == 0))
+                {
+                    count++;
+                }
+            }
+            double average = sum / count++;
+            double roundedaverage = Math.Round(average, 2);
+            return roundedaverage;
+        }
+
+        public static double FindRange(int[] array)
+        {
+            //Low and high numbers intialized
+            double low = array[0];
+            double high = array[0];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] < low)
+                {
+                    low = array[i];
+                }
+                if (array[i] > high)
+                {
+                    high = array[i];
+                }
+            }
+
+            double result = (high - low);
+            double roundedresult = Math.Round(result, 2);
+            return roundedresult;
+        }
         #endregion
 
 
@@ -187,18 +330,30 @@ namespace Sprint1ProjRGBTechno
                     if (ptr < max)
                     {
                         neoArray[ptr] = x;
-                        tempneoArray[ptr] = x;
-                        dsplymax = ptr + 1;
-                        for (int i = 0; i < dsplymax; i++)
+                        neoArray2[ptr] = x;
+                        lboxmax = ptr + 1;
+
+                        //Combining clock array with user input to be displayed on successful parse
+                        object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
+
+                        for (int i = 0; i < lboxmax; i++)
                         {
-                            lboxDisplay.Items.Add(clock[i] + ": " + neoArray[i]);
+                            data[i] = combinedArray[0, i];
+                            time[i] = combinedArray[1, i];
                         }
+
+                        DisplayData(time, data, lboxmax);
                         ptr++;
+
                     }
+
                     //Error Message if array is full
                     else
                     {
                         MessageBox.Show("Reached max amount of items. Can't Input Anymore!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        //Still Display the current array
+                        DisplayData(time, data, lboxmax - 1);
                     }
                     break;
                 //Error message if input value is not an integer
@@ -208,6 +363,15 @@ namespace Sprint1ProjRGBTechno
             }
             neoInput.Clear();
 
+        private void resetbutton_Click(object sender, RoutedEventArgs e)
+        {
+            lboxDisplay.Items.Clear();
+            ClockInitializer(clock);
+            Array.Clear(neoArray);
+            Array.Clear(data);
+            Array.Clear(time);
+            Array.Clear(combinedarray);
+            ptr = 0;
         }
         #endregion
 
@@ -217,12 +381,41 @@ namespace Sprint1ProjRGBTechno
             lboxDisplay.Items.Clear();
             ClockInitializer();
             DefaultFont();
+            modebutton.IsEnabled = false;
+            Array.Clear(neoArray);
+            Array.Clear(clock);
+            Array.Clear(data);
+            Array.Clear(time);
+            Array.Clear(combinedarray);
+            ClockInitializer(clock);
+
+            //Random number from 10-90 as an example
+            Random rand = new Random();
+            for (int i = 0; i < max; i++)
+            {
+                int rInt = rand.Next(10, 90);
+                neoArray[i] = rInt;
+                neoArray2[i] = rInt;
+            }
+            //Combining clock array with user input to be displayed on successful parse
+            object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
 
             if (ptr == max)
             {
-                MessageBox.Show("Data storage is full! No more space to randomize data!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                data[i] = combinedArray[0, i];
+                time[i] = combinedArray[1, i];
             }
-            else
+
+            DisplayData(time, data, max);
+            ptr = 0;
+        }
+
+        private void fillbutton_Click(object sender, RoutedEventArgs e)
+        {
+            lboxDisplay.Items.Clear();
+            ClockInitializer(clock);
+            DefaultFont();
+            if (!(neoArray[0] == 0))
             {
                 //Random number from 10-90 as an example
                 Random rand = new Random();
@@ -230,9 +423,13 @@ namespace Sprint1ProjRGBTechno
                 {
                     int rInt = rand.Next(10, 90);
                     neoArray[i] = rInt;
-                    tempneoArray[i] = rInt;
+                    neoArray2[i] = rInt;
                 }
-                for (int j = 0; j < neoArray.Length; j++)
+
+                //Display Data
+                object[,] combinedArray = CombineArrayAsRows(neoArray2, clock2);
+
+                for (int i = ptr; i < max; i++)
                 {
                     lboxDisplay.Items.Add(clock[j] + ": " + neoArray[j]);
                 }
@@ -242,53 +439,100 @@ namespace Sprint1ProjRGBTechno
         #endregion
 
         #region Bubble Sort
+        private void lboxDisplay_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            editValue.IsEnabled = true;
+            editValueButton.IsEnabled = true;
+
+        }
         //Storing combobox selected item to be called later
         string itemselected;
         private void bblSortChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             itemselected = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
-            smethodlabel.Text = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            smethodlabel.Text = "By " + ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
             DisableFunction();
+            if (itemselected == "Hour")
+            {
+                DisableFunction();
+                timeselection.IsEnabled = false;
+                
+                timeselection.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DisableFunction();
+                timeselection.IsEnabled = false;
+                timeselection.Visibility = Visibility.Hidden;
+            }
         }
 
         private void bblsortButton_Click(object sender, RoutedEventArgs e)
         {
             lboxDisplay.Items.Clear();
+            timeselection.IsEnabled = true;
+            
             DefaultFont();
             ClockInitializer();
             DisableFunction();
-            //Clearing Array according to the last user input
-            
             //Sorting data based on ComboBox Selection
-            if (itemselected == "Data")
+            if (neoArray != null)
             {
-                //Bubble Sort Algo
-                BubbleSort();
-                //Display newly sorted array
-                for (int i = 0; i < max; i++)
+                if (itemselected == "Data")
                 {
-                    lboxDisplay.Items.Add(neoArray[i] + " ");
+                    //Bubble Sort Algo
+                    BubbleSortWithClock(neoArray, clock);
+                    modebutton.IsEnabled = true;
+                    //Display newly sorted array
+                    object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
+
+                    for (int i = 0; i < max; i++)
+                    {
+                        data[i] = combinedArray[0, i];
+                        time[i] = combinedArray[1, i];
+                    }
+                    DisplayData(time, data, max);
+
+                    // Enable Search function
+                    searchValue.IsEnabled = true;
+                    BinarysearchButton.IsEnabled = true;
+                    seqsearchbutton.IsEnabled = true;
                 }
-                // Enable Search function
-                searchValue.IsEnabled = true;
-                searchButton.IsEnabled = true;
-            }
-            else if (itemselected == "Hour")
-            {
-                ClockInitializer();
-                for (int i = 0; i < max; i++)
+                else
                 {
-                    lboxDisplay.Items.Add(clock[i] + ": " + tempneoArray[i]);
+                    ClockInitializer(clock2);
+                    //Display newly sorted array
+                    object[,] combinedArray = CombineArrayAsRows(neoArray2, clock2);
+
+                    for (int i = 0; i < max; i++)
+                    {
+                        data[i] = combinedArray[0, i];
+                        time[i] = combinedArray[1, i];
+                    }
+                    DisplayData(time, data, max);
                 }
             }
             else
             {
-                MessageBox.Show("No Sorting method selected!", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("No value input yet. Please Input a value first!", "Input Failure!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
-           
+
         }
-        #endregion
+        #endregion // Problems with sorting and editing array
+
+        #region Binary Search & Sequential Search
+
+        //Binary Search
+        string timeselected;
+        private void timeselection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            timeselected = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            string[] clockstring = new string[max];
+            for (int i = 0; i < max; i++)
+            {
+                clockstring[i] = clock2[i].ToString();
+            }
 
         #region Binary Search
 
@@ -343,7 +587,6 @@ namespace Sprint1ProjRGBTechno
         #region Edit Function
         private void lboxDisplay_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
             editValue.IsEnabled = true;
             editValueButton.IsEnabled = true;
         }
@@ -351,48 +594,101 @@ namespace Sprint1ProjRGBTechno
         private void editValueButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedItem = lboxDisplay.SelectedItem as string;
+            int result;
 
-            if (itemselected == "Data")
+            bool success = Int32.TryParse(editValue.Text, out result);
+            if (success)
             {
-                if (selectedItem != null)
-                {
-                    // Find the index of the selected item
-                    int index = lboxDisplay.Items.IndexOf(selectedItem);
+                // Find the index of the selected item
+                int index = lboxDisplay.Items.IndexOf(selectedItem);
 
+
+                //try catch method to catch exception error of editing value after search function is clicked 
+                try
+                {
                     // Editing the value
-                    neoArray[index] = int.Parse(editValue.Text);
-                    lboxDisplay.Items.Clear();
-                    BubbleSort();
 
-                    //Display newly edited array 
-                    for (int i = 0; i < max; i++)
+                    for (int i = 0; i < neoArray.Length; i++)
                     {
-                        lboxDisplay.Items.Add(neoArray[i]);
+                        for (int j = 0; i < neoArray2.Length; j++)
+                        {
+                            if (neoArray[i] == neoArray2[i])
+                            {
+                                neoArray2[i] = result;
+                                break;
+                            }
+                        }
                     }
+                    neoArray[index] = result;
                 }
-                else
+
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No input value found. Please input a value.");
+                    MessageBox.Show("No item selected to be edited! Select item first.", "Failed Search", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
+
+                lboxDisplay.Items.Clear();
+                //Display newly sorted array
+                object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
+
+                for (int i = 0; i < max; i++)
+                {
+                    data[i] = combinedArray[0, i];
+                    time[i] = combinedArray[1, i];
+                }
+                DisplayData(time, data, max);
+            }
+            else
+            {
+                MessageBox.Show("No input or invalid value input!", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            editValue.Clear();
+
+
+
+        }
+
+
+        #endregion
+
+        #region Math Calculations
+        private void midexbutton_Click(object sender, RoutedEventArgs e)
+        {
+            if (neoArray != null)
+            {
+                //Mid-extreme Calculations
+                double result = MidExtreme(neoArray);
+                MessageBox.Show($"Mid Extreme: {result:F2}", "Mid-Extreme", MessageBoxButton.OK, MessageBoxImage.Information);
+               
             }
             else
             {
                 // Find the index of the selected item
                 int index = lboxDisplay.Items.IndexOf(selectedItem);
 
-                // Editing the value
-                tempneoArray[index] = int.Parse(editValue.Text);
-                lboxDisplay.Items.Clear();
-                for (int i = 0; i < max; i++)
-                {
-                    lboxDisplay.Items.Add(clock[i] +": "+tempneoArray[i]);
-                }
-            }
-           
+        private void modebutton_Click(object sender, RoutedEventArgs e)
+        {
+            int[] modes = ModeFunction(neoArray);
+            double[] convertedmodes = ConvertAndRound(modes);
+            string modesText = string.Join(", ", convertedmodes.Select(mode => mode.ToString("F2")));
+            MessageBox.Show($"Modes: {modesText}" , "Modes");
+        }
+
+        private void averagebutton_Click(object sender, RoutedEventArgs e)
+        {
+            //Mid-extreme Calculations
+            double result = Convert.ToDouble(FindAverage(neoArray));
+            MessageBox.Show($"Average: {result:F2}", "Average!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         #endregion
 
-        
+        #endregion
+
+        private void rangebutton_Click(object sender, RoutedEventArgs e)
+        {
+            double result = Convert.ToDouble(FindRange(neoArray));
+            MessageBox.Show($"Range: {result:F2}", "Range", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }
    
