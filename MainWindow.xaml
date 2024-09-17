@@ -29,10 +29,10 @@
         <Button x:Name="bblsortButton" Content="Sort" HorizontalAlignment="Left" Margin="287,152,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="bblsortButton_Click"/>
         <TextBlock x:Name="smethodlabel" HorizontalAlignment="Left" Margin="336,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Hour or Data"/>
         <TextBlock x:Name="MathFunctionLabel" HorizontalAlignment="Left" Margin="219,279,0,0" TextWrapping="Wrap" Text="Math Calculations:" VerticalAlignment="Top"/>
-        <Button x:Name="midexbutton" Content="Mid-Extreme" HorizontalAlignment="Left" Margin="233,298,0,0" VerticalAlignment="Top" Height="20" Width="73"/>
-        <Button x:Name="modebutton" Content="Mode" HorizontalAlignment="Left" Margin="322,298,0,0" VerticalAlignment="Top" Height="20" Width="74"/>
-        <Button x:Name="averagebutton" Content="Average" HorizontalAlignment="Left" Margin="233,332,0,0" VerticalAlignment="Top" Height="20" Width="73"/>
-        <Button x:Name="rangebutton" Content="Range" HorizontalAlignment="Left" Margin="322,332,0,0" VerticalAlignment="Top" Height="20" Width="74"/>
+        <Button x:Name="midexbutton" Content="Mid-Extreme" HorizontalAlignment="Left" Margin="233,298,0,0" VerticalAlignment="Top" Height="20" Width="73" Click="midexbutton_Click_1"/>
+        <Button x:Name="modebutton" Content="Mode" HorizontalAlignment="Left" Margin="322,298,0,0" VerticalAlignment="Top" Height="20" Width="74" Click="modebutton_Click_1"/>
+        <Button x:Name="averagebutton" Content="Average" HorizontalAlignment="Left" Margin="233,332,0,0" VerticalAlignment="Top" Height="20" Width="73" Click="averagebutton_Click_1"/>
+        <Button x:Name="rangebutton" Content="Range" HorizontalAlignment="Left" Margin="322,332,0,0" VerticalAlignment="Top" Height="20" Width="74" Click="rangebutton_Click_1"/>
         <TextBlock x:Name="searchLabel" HorizontalAlignment="Left" Margin="213,182,0,0" TextWrapping="Wrap" Text="Search:" VerticalAlignment="Top"/>
         <Button x:Name="seqsearchbutton" Content="Seq" HorizontalAlignment="Left" Margin="376,201,0,0" VerticalAlignment="Top" Height="20" Width="39" Click="seqsearchbutton_Click"/>
         <Button x:Name="resetbutton" Content="Reset" HorizontalAlignment="Left" Margin="376,70,0,0" VerticalAlignment="Top" Height="18" Click="resetbutton_Click"/>
