@@ -5,32 +5,176 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sprint1ProjRGBTechno"
         mc:Ignorable="d"
-        Title="Astronomical Processing" Height="336" Width="435">
-    <Grid HorizontalAlignment="Center" Width="435" Height="326" VerticalAlignment="Top">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ListBox x:Name="lboxDisplay" d:ItemsSource="{d:SampleData ItemCount=5}" Height="238" VerticalAlignment="Top" Margin="23,33,230,0" SelectionChanged="lboxDisplay_SelectionChanged"/>
-        <TextBox x:Name="neoInput" HorizontalAlignment="Left" Margin="211,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Text="Input value here...." GotFocus="neoInput_GotFocus" KeyDown="neoInput_KeyDown"/>
-        <TextBlock x:Name="neoInputLabel" HorizontalAlignment="Left" Margin="211,33,0,0" TextWrapping="Wrap" Text="Neotrinos:" VerticalAlignment="Top"/>
-        <Button x:Name="neoInputButton" Content="Enter" HorizontalAlignment="Left" Margin="374,54,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="neoInputButton_Click"/>
-        <TextBlock x:Name="bnrySearchLabel" HorizontalAlignment="Left" Margin="211,165,0,0" TextWrapping="Wrap" Text="Search By:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="searchValueLabel" HorizontalAlignment="Left" Margin="302,165,0,0" TextWrapping="Wrap" Text="Value:" VerticalAlignment="Top"/>
-        <TextBox x:Name="searchValue" HorizontalAlignment="Left" Margin="302,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="67"/>
-        <Button x:Name="searchButton" Content="Search" HorizontalAlignment="Left" Margin="374,187,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="searchButton_Click"/>
-        <TextBlock x:Name="editValueLabel" HorizontalAlignment="Left" Margin="302,210,0,0" TextWrapping="Wrap" Text="Edit Value:" VerticalAlignment="Top"/>
-        <TextBox x:Name="editValue" HorizontalAlignment="Left" Margin="302,230,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="67"/>
-        <Button x:Name="editValueButton" Content="Edit" HorizontalAlignment="Left" Margin="374,229,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="editValueButton_Click"/>
-        <TextBlock x:Name="lboxLabel" HorizontalAlignment="Left" Margin="23,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Neutrinos:"/>
-        <TextBlock x:Name="randDataLabel" HorizontalAlignment="Left" Margin="211,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Simulate Data:"/>
-        <Button x:Name="randDataButton" Content="Randomizer" HorizontalAlignment="Left" Margin="299,87,0,0" VerticalAlignment="Top" Height="18" Width="70" Click="randDataButton_Click"/>
-        <TextBlock x:Name="bblsortLabel" HorizontalAlignment="Left" Margin="211,113,0,0" TextWrapping="Wrap" Text="Sort By:" VerticalAlignment="Top" RenderTransformOrigin="0.399,0.65"/>
-        <ComboBox x:Name="bblSortChoice" HorizontalAlignment="Left" Margin="211,134,0,0" VerticalAlignment="Top" Width="57" Height="21" SelectionChanged="bblSortChoice_SelectionChanged">
-            <ComboBoxItem>Hour</ComboBoxItem>
-            <ComboBoxItem>Data</ComboBoxItem>
+        Title="Astronomical Processing" Height="406" Width="438">
+    
+    <Window.Resources>
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="LightYellow"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+
+        <Style TargetType="FrameworkElement">
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500"/>
+            <!-- delay in milliseconds -->
+            <Setter Property="ToolTipService.ShowDuration" Value="3000"/>
+            <!-- duration in milliseconds -->
+            <Setter Property="ToolTipService.HorizontalOffset" Value="10"/>
+            <!-- horizontal offset -->
+            <Setter Property="ToolTipService.VerticalOffset" Value="10"/>
+            <!-- vertical offset -->
+        </Style>
+    </Window.Resources>
+    
+    <Grid Name="MainGrid" Margin="0,-15,2,0" Height="401" VerticalAlignment="Top">
+        <Rectangle HorizontalAlignment="Left" Height="94" Margin="213,273,0,0" Stroke="Black" VerticalAlignment="Top" Width="202" Opacity="0.3" RenderTransformOrigin="0.5,0.5"/>
+        
+        <!--Display Box to show array values-->
+        <!--Label-->
+        <TextBlock x:Name="lboxLabel" HorizontalAlignment="Right" Margin="0,26,358,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Neutrinos:"/>
+        <ListBox x:Name="lboxDisplay" d:ItemsSource="{d:SampleData ItemCount=5}" Height="318" VerticalAlignment="Top" Margin="0,49,230,0" SelectionChanged="lboxDisplay_SelectionChanged" HorizontalAlignment="Right" Width="182">
+            <ListBox.ToolTip>
+                <ToolTip>Displays input values. You can select item to edit.</ToolTip>
+            </ListBox.ToolTip>
+        </ListBox>
+        
+        <!--Input Components-->
+        <!--Label-->
+        <TextBlock x:Name="neoInputLabel" HorizontalAlignment="Left" Margin="213,49,0,0" TextWrapping="Wrap" Text="Neotrinos:" VerticalAlignment="Top"/>
+        <!--User input text box-->
+        <TextBox x:Name="neoInput" HorizontalAlignment="Left" Margin="213,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113" Text="Input value here...." GotFocus="neoInput_GotFocus" KeyDown="neoInput_KeyDown">
+            <TextBox.ToolTip>
+                <ToolTip>Type your neutrino values here. Press enter or click enter button to store value.</ToolTip>
+            </TextBox.ToolTip>
+        </TextBox>
+        <!--Button to intiate storing data-->
+        <Button x:Name="neoInputButton" Content="Enter" HorizontalAlignment="Left" Margin="332,70,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="neoInputButton_Click">
+            <Button.ToolTip>
+                <ToolTip>Stores your value from input text.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <!--Button to reset arrays-->
+        <Button x:Name="resetbutton" Content="Reset" HorizontalAlignment="Left" Margin="376,70,0,0" VerticalAlignment="Top" Height="18" Click="resetbutton_Click">
+            <Button.ToolTip>
+                <ToolTip>Resets the array. Deletes the stored data and start at 12 AM.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        
+        
+        <!--Randomizer Components-->
+        <!--Label-->
+        <TextBlock x:Name="randDataLabel" HorizontalAlignment="Left" Margin="213,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Simulate Data:"/>
+        <!--Randomizer Button-->
+        <Button x:Name="randDataButton" Content="Randomizer" HorizontalAlignment="Left" Margin="301,102,0,0" VerticalAlignment="Top" Height="18" Width="70" Click="randDataButton_Click">
+            <Button.ToolTip>
+                <ToolTip>Randomizes the whole set of data. Deletes everything and fills in with random numbers.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <!--Fill Button-->
+        <Button x:Name="fillbutton" Content="Fill" HorizontalAlignment="Left" Margin="376,102,0,0" VerticalAlignment="Top" Height="18" Width="33" Click="fillbutton_Click">
+            <Button.ToolTip>
+                <ToolTip>Fills the rest of empty data.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+
+        <!--Sorting Components-->
+        <!--Label-->
+        <TextBlock x:Name="bblsortLabel" HorizontalAlignment="Left" Margin="213,129,0,0" TextWrapping="Wrap" Text="Sort By:" VerticalAlignment="Top" RenderTransformOrigin="0.399,0.65"/>
+        <!--User selection box-->
+        <ComboBox x:Name="bblSortChoice" HorizontalAlignment="Left" Margin="213,150,0,0" VerticalAlignment="Top" Width="57" Height="21" SelectionChanged="bblSortChoice_SelectionChanged">
+            <ComboBoxItem Content="Hour"/>
+            <ComboBoxItem Content="Data"/>
+            <ComboBox.ToolTip>
+                <ToolTip>Select how you want the values to be sorted.</ToolTip>
+            </ComboBox.ToolTip>
         </ComboBox>
-        <Button x:Name="bblsortButton" Content="Sort" HorizontalAlignment="Left" Margin="283,135,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="bblsortButton_Click"/>
-        <TextBlock x:Name="smethodlabel" HorizontalAlignment="Left" Margin="211,189,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Hour or Data"/>
+        <!--Combobox for timeselection-->
+        <ComboBox x:Name="timeselection" Margin="211,201,0,0" HorizontalAlignment="Left" Width="115" Height="19" VerticalAlignment="Top" Visibility="Hidden" SelectionChanged="timeselection_SelectionChanged">
+            <ComboBox.ToolTip>
+                <ToolTip>Select the hour you want to find.</ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <!--Initiate the sort-->
+        <Button x:Name="bblsortButton" Content="Sort" HorizontalAlignment="Left" Margin="287,152,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="bblsortButton_Click">
+            <Button.ToolTip>
+                <ToolTip>Sort the data by selection: hour or data,</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <!--Show what type of sorting is done on the set of data-->
+        <TextBlock x:Name="smethodlabel" HorizontalAlignment="Left" Margin="336,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Hour or Data"/>
+        <TextBlock x:Name="searchLabel" HorizontalAlignment="Left" Margin="213,182,0,0" TextWrapping="Wrap" Text="Search:" VerticalAlignment="Top"/>
+
+        <!--Binary Search Components-->
+        <!--Label-->
+        <TextBlock x:Name="bnrySearchLabel" HorizontalAlignment="Left" Margin="336,129,0,0" TextWrapping="Wrap" Text="Sorted:" VerticalAlignment="Top"/>
+        <!--User Text Box to input target value-->
+        <TextBox x:Name="searchValue" Margin="213,201,0,0" TextWrapping="Wrap" HorizontalAlignment="Left" Width="113" Height="19" VerticalAlignment="Top">
+            <TextBox.ToolTip>
+                <ToolTip>Input your search target here. Please write numbers and not letters.</ToolTip>
+            </TextBox.ToolTip>
+        </TextBox>
+        <!--Buttons to initiate the search action-->
+        <Button x:Name="BinarysearchButton" Content="Binary" HorizontalAlignment="Left" Margin="333,201,0,0" VerticalAlignment="Top" Height="20" Width="38" Click="BinarysearchButton_Click" RenderTransformOrigin="0.128,0.53">
+            <Button.ToolTip>
+                <ToolTip>Click to start the binary search.</ToolTip>
+            </Button.ToolTip>    
+        </Button>
+
+        <!--Sequential Search Components-->
+        <Button x:Name="seqsearchbutton" Content="Seq" HorizontalAlignment="Left" Margin="376,201,0,0" VerticalAlignment="Top" Height="20" Width="39" Click="seqsearchbutton_Click">
+            <Button.ToolTip>
+                <ToolTip>Click to initiate sequential search.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        
+        <!--Editing Components-->
+        <!--Label-->
+        <TextBlock x:Name="editValueLabel" HorizontalAlignment="Left" Margin="213,226,0,0" TextWrapping="Wrap" Text="Edit Value:" VerticalAlignment="Top"/>
+        <!--User input box-->
+        <TextBox x:Name="editValue" HorizontalAlignment="Left" Margin="213,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="57">
+            <TextBox.ToolTip>
+                <ToolTip>Type in the new value.</ToolTip>
+            </TextBox.ToolTip>
+        </TextBox>
+        <!--Button to initiate-->
+        <Button x:Name="editValueButton" Content="Edit" HorizontalAlignment="Left" Margin="287,246,0,0" VerticalAlignment="Top" Height="18" Width="40" Click="editValueButton_Click">
+            <Button.ToolTip>
+                <ToolTip>Click to replace the selected value.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+
+        <!--Math Calculation Components-->
+        <TextBlock x:Name="MathFunctionLabel" HorizontalAlignment="Left" Margin="219,279,0,0" TextWrapping="Wrap" Text="Math Calculations:" VerticalAlignment="Top"/>
+        <!--Mid Extreme-->
+        <Button x:Name="midexbutton" Content="Mid-Extreme" HorizontalAlignment="Left" Margin="233,298,0,0" VerticalAlignment="Top" Height="20" Width="73" Click="midexbutton_Click_1">
+            <Button.ToolTip>
+                <ToolTip>Calculate the mid-extreme.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <!--Mode-->
+        <Button x:Name="modebutton" Content="Mode" HorizontalAlignment="Left" Margin="322,298,0,0" VerticalAlignment="Top" Height="20" Width="74" Click="modebutton_Click_1">
+            <Button.ToolTip>
+                <ToolTip>Caculate the mode. Sort the number by data first.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <!--Average-->
+        <Button x:Name="averagebutton" Content="Average" HorizontalAlignment="Left" Margin="233,332,0,0" VerticalAlignment="Top" Height="20" Width="73" Click="averagebutton_Click_1">
+            <Button.ToolTip>
+                <ToolTip>Calculate the average.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+            
+        <!--Range-->
+        <Button x:Name="rangebutton" Content="Range" HorizontalAlignment="Left" Margin="322,332,0,0" VerticalAlignment="Top" Height="20" Width="74" Click="rangebutton_Click_1">
+            <Button.ToolTip>
+                <ToolTip>Calculate the range.</ToolTip>
+            </Button.ToolTip>
+        </Button>
+       
+        
+        
+        
 
     </Grid>
 </Window>
