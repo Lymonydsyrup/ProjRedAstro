@@ -36,18 +36,14 @@ namespace Sprint1ProjRGBTechno
             ClockInitializer(clock);
 
             //Random number from 10-90 as an example
-            Random rand = new Random();
-            for (int i = 0; i < 24; i++)
-            {
-                int rInt = rand.Next(10, 90);
-                neoArray[i] = rInt;
-                lboxDisplay.Items.Add(clock[i] + ": " + neoArray[i]);
-            }
-            //Clearing the sample data for user input
-            Array.Clear(neoArray);
+            Randomizer(neoArray);
+            AddtoDict(clckDtaDict, clock, neoArray);
+            DisplayData(clock, neoArray);
             //Disabling Edit and Search Function until data is sorted
             DisableFunction();
-
+            //Clearing the sample data for user input
+            Array.Clear(neoArray);
+            clckDtaDict.Clear();
             //Adding items on combobox
             for (int i = 0; i < max; i++)
             {
@@ -56,72 +52,81 @@ namespace Sprint1ProjRGBTechno
         }
 
         #region Constant Values, Arrays and Dictionary
-        
+
         //NeoData Value, Array and Dictionary
-        const int max = 24;
+        //Universal max for all sets of data
+        const int max = 24; 
         int[] neoArray = new int[max];
-        Dictionary<string, int> clockData = new();
+        Dictionary<string, int> clckDtaDict = new();
 
 
         //Timestamp clock values: 12hour-clock
-        const int timemax = 24;
-        object[] clock = new object[timemax];
-
-        // Display arrays for timestamp and user input
-        object[] data = new object[max];
-        object[] time = new object[max];
-        object[,] combinedarray = new object[1, 24];
+        string[] clock = new string[max];
         #endregion
 
         //Methods, aside from Algorithms, that will be used in this app
         #region Methods
 
-        //Display the data and time to listbox
-        public void DisplayData(object[] time, object[] data, int max)
+        //Randomizing numbers
+        public void Randomizer(int[] array)
+        {
+            Random rand = new Random();
+            for (int i = 0; i < 24; i++)
+            {
+                int rInt = rand.Next(10, 90);
+                array[i] = rInt;
+            }
+        }
+
+        //Adding clock and Data to Dictionary
+        public void AddtoDict(Dictionary<string, int> dict, object[] key, int[] value)
         {
             for (int i = 0; i < max; i++)
             {
-                lboxDisplay.Items.Add(time[i] + " : " + data[i]);
+                clckDtaDict.Add(key[i].ToString(), value[i]);
             }
         }
 
-        //2D Aray Method to combine 2 arrays
-        public static object[,] CombineArrayAsRows(int[] array1, object[] array2)
+        //Getting the data from dictionary back to their respective arrays
+        public void DictToArray <Tarray1, Tarray2>(Dictionary<Tarray2, Tarray1> dict, Tarray1[] values, Tarray2[] key)
         {
-            //Exception if arrays are not the same length
-            if (array1.Length != array2.Length)
-            {
-                throw new InvalidOperationException("Arrays must be the same length");
-            };
-
-            //Creating 2 arrays as rows
-            object[,] combineArray = new object[2, array1.Length];
-
-            for (int i = 0; i < array1.Length; i++)
-            {
-                combineArray[0, i] = array1[i];
-                combineArray[1, i] = array2[i];
-            }
-
-            return combineArray;
+            dict.Values.CopyTo(values, 0);
+            dict.Keys.CopyTo(key, 0);
         }
 
-        //Clearing Array based on the last input of the user
-        //For readability and allows me to show input data that are in the array and not zeroes
-        public void ClearArrayFromPtr(int[] array, int max, int ptr)
+        //Display the data and time to listbox
+        public void DisplayData<Tarray1, Tarray2>(Tarray1[] array1, Tarray2[] array2)
         {
-            for (int i = ptr; i < max; i++)
+            for(int i = 0;i < max; i++)
             {
-                array[i] = 0;
+                if (array1[i] != null && array2 != null)
+                {
+                    lboxDisplay.Items.Add(array1[i] + " : " +  array2[i]);
+                }
             }
         }
 
+        //Check if array has value
+        public static int ArrayCheckValue(int[] array)
+        {
+            //Check if there is value on the array 
+            int arrayValue = 0;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                arrayValue = array[i];
+            }
+
+            return arrayValue;
+        }
+
+        
         //Initializing clock values: 12hour-clock
-        public void ClockInitializer(object[] clock)
+        public void ClockInitializer(string[] clock)
         {
             int am = 1;
             int pm = 1;
-            for (int h = 0; h < timemax; h++)
+            for (int h = 0; h < max; h++)
             {
                 if (h == 0) clock[h] = 12 + " " + "AM";
                 else if (h < 12)
@@ -183,7 +188,6 @@ namespace Sprint1ProjRGBTechno
         #endregion
 
         #region Search and Sorting Algo Methods
-        //Bubble Sort Method for data together with the clock
         //Its for pairing the changes maid on array
         //If the neoArray(data) is sorted, so is the clock to match and pair them on display
         public void BubbleSort(int[] array, object[] clock)
@@ -430,9 +434,6 @@ namespace Sprint1ProjRGBTechno
             DisableFunction();
             ClockInitializer(clock);
 
-            //Clearing Array from the last data input upto the max length of array
-            ClearArrayFromPtr(neoArray, max, ptr);
-
             //Input parsing and display to listbox
             int x;
             bool success = int.TryParse(neoInput.Text, out x);
@@ -446,27 +447,18 @@ namespace Sprint1ProjRGBTechno
                         //Store user input to empty space of array
                         neoArray[ptr] = x;
                         lboxmax = ptr + 1;
-                        clockData.Add(clock[ptr].ToString(), neoArray[ptr]);
+                        clckDtaDict.Add(clock[ptr].ToString(), neoArray[ptr]);
+                        ptr++;
                     }
 
                     //Error Message if array is full
                     else
                     {
-                        MessageBox.Show("Reached max amount of items. Can't Input Anymore!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Reached max amount of items. Reset data first to input.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     }
 
-                    //Combining clock array with user input to be displayed on successful parse
-                    object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-                    for (int i = 0; i < lboxmax; i++)
-                    {
-                        data[i] = combinedArray[0, i];
-                        time[i] = combinedArray[1, i];
-                    }
-
-                    DisplayData(time, data, lboxmax);
-                    ptr++;
+                    DisplayData(clock, neoArray);
                     break;
 
                 //Error message if input value is not an integer
@@ -474,7 +466,7 @@ namespace Sprint1ProjRGBTechno
                     MessageBox.Show("Value entered is not a number or empty. Please input a number!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     //Still Display the current array
-                    DisplayData(time, data, lboxmax - 1);
+                    DisplayData(clock, neoArray);
                     break;
             }
             fillbutton.IsEnabled = true;
@@ -485,6 +477,7 @@ namespace Sprint1ProjRGBTechno
         {
             lboxDisplay.Items.Clear();
             ClockInitializer(clock);
+            clckDtaDict.Clear();
 
             //Example font after reset
             lboxDisplay.Items.Add("Example data. Input a value.");
@@ -493,24 +486,16 @@ namespace Sprint1ProjRGBTechno
 
 
             // Random Data again for example on display
-            Random rand = new Random();
-            for (int i = 0; i < 24; i++)
-            {
-                int rInt = rand.Next(10, 90);
-                neoArray[i] = rInt;
-                lboxDisplay.Items.Add(clock[i] + ": " + neoArray[i]);
-            }
+            Randomizer(neoArray);
+            AddtoDict(clckDtaDict, clock, neoArray);
+            DisplayData(clock, neoArray);
 
             //Resetting and every array
             //Ready for new user input data
-            clockData.Clear();
+            clckDtaDict.Clear();
             Array.Clear(neoArray);
-            Array.Clear(data);
-            Array.Clear(time);
-            Array.Clear(combinedarray);
+            Array.Clear(clock);
             ptr = 0;
-
-            
         }
         #endregion
 
@@ -524,41 +509,15 @@ namespace Sprint1ProjRGBTechno
 
             //Resetting every array to prep for inserting new random data
             modebutton.IsEnabled = false;
-            clockData.Clear();
+            clckDtaDict.Clear();
             Array.Clear(neoArray);
             Array.Clear(clock);
-            Array.Clear(data);
-            Array.Clear(time);
-            Array.Clear(combinedarray);
             ClockInitializer(clock);
+            Randomizer(neoArray);
+            ptr = max;
+            AddtoDict(clckDtaDict, clock, neoArray);
+            DisplayData(clock, neoArray);
 
-            //Random number from 10-90 as an example
-            Random rand = new Random();
-            for (int i = 0; i < max; i++)
-            {
-                //Inserting the input data to the array
-                int rInt = rand.Next(10, 90);
-                neoArray[i] = rInt;
-
-                //Adding the values of two arrays(clock and neoArray) into the dictionary
-                //Clock as key and neoArray as value
-                clockData.Add(clock[i].ToString(), neoArray[i]);
-            }
-
-            
-            clock = clockData.Keys.Cast<object>().ToArray();
-            clockData.Values.CopyTo(neoArray, 0);
-
-            //Combining clock array with user input to be displayed on successful parse
-            object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-            for (int i = 0; i < max; i++)
-            {
-                data[i] = combinedArray[0, i];
-                time[i] = combinedArray[1, i];
-            }
-
-            DisplayData(time, data, max);
         }
 
         //Filling up the unused spaced in the array
@@ -570,30 +529,23 @@ namespace Sprint1ProjRGBTechno
 
             if (!(neoArray[0] == 0))//Fill button won't perform unless there is a user input
             {
-                //Randomizing the empty space of the array
+                //Randomizing the unfilled indecies of the array
                 Random rand = new Random();
                 for (int i = ptr; i < max; i++)
                 {
                     int rInt = rand.Next(10, 90);
                     neoArray[i] = rInt;
-
-                    //Adds the array to the dictionary 
-                    clockData.Add(clock[i].ToString(), neoArray[i]);
+                    if (clckDtaDict.ContainsKey(clock[ptr]))
+                    {
+                        clckDtaDict[clock[ptr]] = rInt;
+                    }
+                    
                 }
 
-                //Copying the Dicitionary values and keys to their respective array
-                clock = clockData.Keys.Cast<object>().ToArray();
-                clockData.Values.CopyTo(neoArray, 0);
+                //Ptr is maxed indicating that all spaces of the array is filled
+                ptr = max;
 
-                //Display Data
-                object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-                for (int i = ptr; i < max; i++)
-                {
-                    data[i] = combinedArray[0, i];
-                    time[i] = combinedArray[1, i];
-                }
-                DisplayData(time, data, max);
+                DisplayData(clock, neoArray);
             }
             else
             {
@@ -650,27 +602,16 @@ namespace Sprint1ProjRGBTechno
             DisableFunction();
 
             //Checking if the array is empty or not
-            int arrayValue = 0;
-
-            for (int i = 0; i < neoArray.Length; i++)
-            {
-                arrayValue = neoArray[i];
-            }
+            int arrayValue = ArrayCheckValue(neoArray);
 
             //Sorting data based on ComboBox Selection
             if (arrayValue != 0)
             {
-               
-                // Catching error if the array is empty
                 if (itemselected != null)
                 {
-
-                    //Separating two combobox items each with separate actions/event to run
-
                     if (itemselected == "Data")
                     {
-                        //The values has already been copied to their respective array
-                        //So we can just call the Bubble sort method for both the arrays 
+                        DictToArray(clckDtaDict, neoArray, clock);
                         BubbleSort(neoArray, clock);
                         modebutton.IsEnabled = true;
                         
@@ -681,23 +622,14 @@ namespace Sprint1ProjRGBTechno
 
 
                         //Display newly sorted array
-                        object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-                        for (int i = 0; i < max; i++)
-                        {
-                            data[i] = combinedArray[0, i];
-                            time[i] = combinedArray[1, i];
-                        }
-                        DisplayData(time, data, max);
+                        
+                        DisplayData(clock, neoArray);
                     }
 
+                    //If sorting selected is by the "Hour"
                     else
                     {
-                        
-                        //Copy the untouched dictionary values and keys to their respective array
-                        //This help in reverting back the original position of values which by the time they are stored
-                        clock = clockData.Keys.Cast<object>().ToArray();
-                        clockData.Values.CopyTo(neoArray, 0);
+                        DictToArray(clckDtaDict, neoArray, clock);
 
                         //Disabling Search functions 
                         searchValue.IsEnabled = false;
@@ -705,14 +637,8 @@ namespace Sprint1ProjRGBTechno
                         seqsearchbutton.IsEnabled = false;
 
                         //Display newly sorted array
-                        object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-                        for (int i = 0; i < max; i++)
-                        {
-                            data[i] = combinedArray[0, i];
-                            time[i] = combinedArray[1, i];
-                        }
-                        DisplayData(time, data, max);
+                        
+                        DisplayData(clock, neoArray);
                     }
 
                 }
@@ -742,10 +668,10 @@ namespace Sprint1ProjRGBTechno
         string timeselected;
         private void timeselection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Getting the timeselection and converted to string
+            //Getting the timeselection from combobox and converted to string
             timeselected = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
             
-            //Unpacking the object type clock[] arrat into a string and store it inside a new string[] array
+            
             string[] clockstring = new string[max];
             for (int i = 0; i < max; i++)
             {
@@ -762,29 +688,27 @@ namespace Sprint1ProjRGBTechno
         //Binary Search Function
         private void BinarysearchButton_Click(object sender, RoutedEventArgs e)
         {
-            //Using if statement to seperate events that happents when selection is either Data or Hour
             if (itemselected == "Data")
             {
                 //Ensuring that input is int and not a string
                 int x;
                 bool success = int.TryParse(searchValue.Text, out x);
 
-                //Running conditional code if parsing is successful
                 switch (success)
                 {
+                    //If parsing is successful
                     case true:
                         
                         int result = BinarySearch(neoArray, x);
-                        //If statement when target value is found
+                        //When target value is found through BinarySearch
                         if (result != -1)
                         {
                             //Message Box to confirm that the value is found
                             MessageBox.Show("Data Found!", "Successful Search", MessageBoxButton.OK, MessageBoxImage.Information);
                             
           
-                            // Select the found item on List Box
+                            // Show and Select the target value on List Box
                             lboxDisplay.SelectedIndex = result;
-                            // Scroll to the selected item
                             lboxDisplay.ScrollIntoView(lboxDisplay.SelectedItem);
 
 
@@ -815,22 +739,19 @@ namespace Sprint1ProjRGBTechno
             int x;
             bool success = int.TryParse(searchValue.Text, out x);
 
-            //Running conditional code if parsing is successful
             switch (success)
             {
-                
+                //On successful parse
                 case true:
-                    //If statement when target value is found
                     int result = LinearSearch(neoArray, x);
-
+                    //When target is found through linearsearch
                     if (result != -1)
                     {
                         //Message Box to confirm that the value is found
                         MessageBox.Show("Data Found!", "Successful Search", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // Select the found item
+                        //Show and Select the found item
                         lboxDisplay.SelectedIndex = result;
-                        // Scroll to the selected item
                         lboxDisplay.ScrollIntoView(lboxDisplay.SelectedItem);
                    
 
@@ -855,16 +776,16 @@ namespace Sprint1ProjRGBTechno
 
         private void editValueButton_Click(object sender, RoutedEventArgs e)
         {
+            //Input parsing to int if it can be converted to an integer
             int inputData;
-
-            //Input paring to int if it can be converted to an integer
             bool success = Int32.TryParse(editValue.Text, out inputData);
 
             if (success)
             {
                 
-                //Try catch method to capture no selection error
-                //When there is no selected item on display box to edit
+                //Try-catch to display error
+                //when there is no item on listbox selected
+                //Can't edit if no item is selected
                 try
                 {
                     // Find the index of the selected item
@@ -872,18 +793,12 @@ namespace Sprint1ProjRGBTechno
 
                     // Editing the value
                     neoArray[selectedIndex] = inputData;
-                    clockData[clock[selectedIndex].ToString()] = neoArray[selectedIndex];
+                    clckDtaDict[clock[selectedIndex].ToString()] = neoArray[selectedIndex];
 
                     lboxDisplay.Items.Clear();
                     //Display newly sorted array
-                    object[,] combinedArray = CombineArrayAsRows(neoArray, clock);
-
-                    for (int i = 0; i < max; i++)
-                    {
-                        data[i] = combinedArray[0, i];
-                        time[i] = combinedArray[1, i];
-                    }
-                    DisplayData(time, data, max);
+                    
+                    DisplayData(clock, neoArray);
                 }
                 catch
                 {
@@ -908,12 +823,7 @@ namespace Sprint1ProjRGBTechno
         private void midexbutton_Click_1(object sender, RoutedEventArgs e)
         {
             //Check if there is value on the array 
-            int arrayValue = 0;
-
-            for (int i = 0; i < neoArray.Length; i++)
-            {
-                arrayValue = neoArray[i];
-            }
+            int arrayValue = ArrayCheckValue(neoArray);
 
             //If the value is present run this code
             if (arrayValue != 0)
@@ -936,29 +846,69 @@ namespace Sprint1ProjRGBTechno
         //Mode Calculations
         private void modebutton_Click_1(object sender, RoutedEventArgs e)
         {
-            int[] modes = ModeFunction(neoArray);
+            //Check if there is value on the array 
+            int arrayValue = ArrayCheckValue(neoArray);
 
-            //Converting Int values from array and Rounding up
-            double[] convertedmodes = ConvertAndRound(modes);
-            string modesText = string.Join(", ", convertedmodes.Select(mode => mode.ToString("F2")));
-            MessageBox.Show($"Modes: {modesText}", "Modes");
+            //If the value is present run this code
+            if (arrayValue != 0)
+            {
+                int[] modes = ModeFunction(neoArray);
+
+                //Converting Int values from array and Rounding up
+                double[] convertedmodes = ConvertAndRound(modes);
+                string modesText = string.Join(", ", convertedmodes.Select(mode => mode.ToString("F2")));
+                MessageBox.Show($"Modes: {modesText}", "Modes");
+            }
+
+            //Error event when there is no value on the array
+            else
+            {
+                MessageBox.Show("No value input yet. Please Input a value first!", "Calculations Fail!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         //Average Calculations
         private void averagebutton_Click_1(object sender, RoutedEventArgs e)
         {
-            //Mid-extreme Calculations
-            //Converting the int values from the array and rounding up
-            double result = Convert.ToDouble(FindAverage(neoArray));
-            MessageBox.Show($"Average: {result:F2}", "Average!", MessageBoxButton.OK, MessageBoxImage.Information);
+            //Check if there is value on the array 
+            int arrayValue = ArrayCheckValue(neoArray);
+            //If the value is present run this code
+            if (arrayValue != 0)
+            {
+                //Mid-extreme Calculations
+                //Converting the int values from the array and rounding up
+                double result = Convert.ToDouble(FindAverage(neoArray));
+                MessageBox.Show($"Average: {result:F2}", "Average!", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            //Error event when there is no value on the array
+            else
+            {
+                MessageBox.Show("No value input yet. Please Input a value first!", "Calculations Fail!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
         }
 
         //Range Calculations
         private void rangebutton_Click_1(object sender, RoutedEventArgs e)
         {
-            //Converting the int values from the array and rounding up
-            double result = Convert.ToDouble(FindRange(neoArray));
-            MessageBox.Show($"Range: {result:F2}", "Range", MessageBoxButton.OK, MessageBoxImage.Information);
+            //Check if there is value on the array 
+            int arrayValue = ArrayCheckValue(neoArray);
+
+            //If the value is present run this code
+            if (arrayValue != 0)
+            {
+                //Converting the int values from the array and rounding up
+                double result = Convert.ToDouble(FindRange(neoArray));
+                MessageBox.Show($"Range: {result:F2}", "Range", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            //Error event when there is no value on the array
+            else
+            {
+                MessageBox.Show("No value input yet. Please Input a value first!", "Calculations Fail!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
         }
         #endregion
 

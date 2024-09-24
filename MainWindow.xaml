@@ -57,7 +57,7 @@
         <!--Button to reset arrays-->
         <Button x:Name="resetbutton" Content="Reset" HorizontalAlignment="Left" Margin="376,70,0,0" VerticalAlignment="Top" Height="18" Click="resetbutton_Click">
             <Button.ToolTip>
-                <ToolTip>Resets the array. Deletes the stored data and start at 12 AM.</ToolTip>
+                <ToolTip>Resets the array. Deletes the stored data and starts at 12 AM.</ToolTip>
             </Button.ToolTip>
         </Button>
         
@@ -89,16 +89,10 @@
                 <ToolTip>Select how you want the values to be sorted.</ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <!--Combobox for timeselection-->
-        <ComboBox x:Name="timeselection" Margin="211,201,0,0" HorizontalAlignment="Left" Width="115" Height="19" VerticalAlignment="Top" Visibility="Hidden" SelectionChanged="timeselection_SelectionChanged">
-            <ComboBox.ToolTip>
-                <ToolTip>Select the hour you want to find.</ToolTip>
-            </ComboBox.ToolTip>
-        </ComboBox>
         <!--Initiate the sort-->
         <Button x:Name="bblsortButton" Content="Sort" HorizontalAlignment="Left" Margin="287,152,0,0" VerticalAlignment="Top" Height="18" Width="39" Click="bblsortButton_Click">
             <Button.ToolTip>
-                <ToolTip>Sort the data by selection: hour or data,</ToolTip>
+                <ToolTip>Initiate sorting by selection.</ToolTip>
             </Button.ToolTip>
         </Button>
         <!--Show what type of sorting is done on the set of data-->
@@ -111,9 +105,15 @@
         <!--User Text Box to input target value-->
         <TextBox x:Name="searchValue" Margin="213,201,0,0" TextWrapping="Wrap" HorizontalAlignment="Left" Width="113" Height="19" VerticalAlignment="Top">
             <TextBox.ToolTip>
-                <ToolTip>Input your search target here. Please write numbers and not letters.</ToolTip>
+                <ToolTip>Input your search target here.</ToolTip>
             </TextBox.ToolTip>
         </TextBox>
+        <!--Combobox for timeselection-->
+        <ComboBox x:Name="timeselection" Margin="211,201,0,0" HorizontalAlignment="Left" Width="115" Height="19" VerticalAlignment="Top" SelectionChanged="timeselection_SelectionChanged">
+            <ComboBox.ToolTip>
+                <ToolTip>Select the hour you want to find.</ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
         <!--Buttons to initiate the search action-->
         <Button x:Name="BinarysearchButton" Content="Binary" HorizontalAlignment="Left" Margin="333,201,0,0" VerticalAlignment="Top" Height="20" Width="38" Click="BinarysearchButton_Click" RenderTransformOrigin="0.128,0.53">
             <Button.ToolTip>
