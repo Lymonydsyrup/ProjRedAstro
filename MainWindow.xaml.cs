@@ -78,7 +78,7 @@ namespace Sprint1ProjRGBTechno
             }
         }
 
-        //Adding clock and Data to Dictionary
+        //Adding clock and input data to Dictionary
         public void AddtoDict(Dictionary<string, int> dict, object[] key, int[] value)
         {
             for (int i = 0; i < max; i++)
@@ -114,7 +114,11 @@ namespace Sprint1ProjRGBTechno
 
             for (int i = 0; i < array.Length; i++)
             {
-                arrayValue = array[i];
+                if (array[i] !=0)
+                {
+                    arrayValue++;
+                    break;
+                }
             }
 
             return arrayValue;
@@ -322,7 +326,7 @@ namespace Sprint1ProjRGBTechno
         }
 
         //Mode Calculation
-        public static int[] ModeFunction(int[] array)
+        public static int[] ModeFunction(int[] array, int datalength)
         {
             // Handle empty array case
             if (array.Length == 0)
@@ -330,16 +334,16 @@ namespace Sprint1ProjRGBTechno
 
             //Counters and Arrays to hold the most frequent numbers
             int maxCount = 0;
-            int[] frequency = new int[array.Length];
+            int[] frequency = new int[datalength];
             int freqindex = 0;
 
             // Iterate through each number in the array
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < datalength; i++)
             {
                 int count = 0;
 
                 // Count occurrences of the current number
-                for (int j = 0; j < array.Length; j++)
+                for (int j = 0; j < datalength; j++)
                 {
                     if (array[j] == array[i])
                     {
@@ -445,6 +449,7 @@ namespace Sprint1ProjRGBTechno
                     if (ptr != max)
                     {
                         //Store user input to empty space of array
+                        DictToArray(clckDtaDict, neoArray, clock);
                         neoArray[ptr] = x;
                         lboxmax = ptr + 1;
                         clckDtaDict.Add(clock[ptr].ToString(), neoArray[ptr]);
@@ -601,6 +606,17 @@ namespace Sprint1ProjRGBTechno
             DefaultFont();
             DisableFunction();
 
+            //Deleting/Initializing old values from arrays before copying values from dict
+            Array.Clear(neoArray);
+            Array.Clear(clock);
+            DictToArray(clckDtaDict, neoArray, clock);
+
+            //Reset timeselection combobox selection
+            if (timeselection.SelectedIndex != -1)
+            {
+                timeselection.SelectedIndex = -1;
+            }
+
             //Checking if the array is empty or not
             int arrayValue = ArrayCheckValue(neoArray);
 
@@ -611,7 +627,7 @@ namespace Sprint1ProjRGBTechno
                 {
                     if (itemselected == "Data")
                     {
-                        DictToArray(clckDtaDict, neoArray, clock);
+                        
                         BubbleSort(neoArray, clock);
                         modebutton.IsEnabled = true;
                         
@@ -629,15 +645,12 @@ namespace Sprint1ProjRGBTechno
                     //If sorting selected is by the "Hour"
                     else
                     {
-                        DictToArray(clckDtaDict, neoArray, clock);
-
                         //Disabling Search functions 
                         searchValue.IsEnabled = false;
                         BinarysearchButton.IsEnabled = false;
                         seqsearchbutton.IsEnabled = false;
 
                         //Display newly sorted array
-                        
                         DisplayData(clock, neoArray);
                     }
 
@@ -669,7 +682,11 @@ namespace Sprint1ProjRGBTechno
         private void timeselection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Getting the timeselection from combobox and converted to string
-            timeselected = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            if (timeselection.SelectedIndex != -1)
+            {
+                timeselected = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            }
+            
             
             
             string[] clockstring = new string[max];
@@ -785,7 +802,7 @@ namespace Sprint1ProjRGBTechno
                 
                 //Try-catch to display error
                 //when there is no item on listbox selected
-                //Can't edit if no item is selected
+                //Can't edit if no item is selected on display box
                 try
                 {
                     // Find the index of the selected item
@@ -852,7 +869,8 @@ namespace Sprint1ProjRGBTechno
             //If the value is present run this code
             if (arrayValue != 0)
             {
-                int[] modes = ModeFunction(neoArray);
+                DictToArray(clckDtaDict, neoArray, clock);
+                int[] modes = ModeFunction(neoArray, ptr);
 
                 //Converting Int values from array and Rounding up
                 double[] convertedmodes = ConvertAndRound(modes);
